@@ -20,7 +20,7 @@ ABall::ABall()
 
 	//CollisionSphere->SetEnableGravity(false);
 	//CollisionSphere->SetSimulatePhysics(true);
-	CollisionSphere->SetCollisionProfileName("BlockAllDynamic");
+	CollisionSphere->SetCollisionProfileName("Pawn");
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SetRootComponent(CollisionSphere);
 
@@ -37,14 +37,7 @@ ABall::ABall()
 	//CollisionSphere->GetBodyInstance()->bLockYTranslation = true;
 	//CollisionSphere->GetBodyInstance()->bLockZTranslation = true;
 
-	ProjectileMovement->ProjectileGravityScale = 0.f;
-	ProjectileMovement->InitialSpeed = 1000.f;
-	ProjectileMovement->MaxSpeed = 1000.f;
-	ProjectileMovement->bShouldBounce = true;
-	ProjectileMovement->Bounciness = 1.1;
-	ProjectileMovement->Friction = 0.f;
-
-	InitialBallLocation = GetActorLocation();
+	DefaultProjectileMovement();
 }
 
 // Called when the game starts or when spawned
@@ -64,26 +57,14 @@ void ABall::BeginPlay()
 void ABall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//SpawnDirection->SetWorldRotation(GetActorRotation());
-	BallObject = Cast<ABall>(UGameplayStatics::GetActorOfClass(GetWorld(), ABall::StaticClass()));
-	SpawnBall();
 }
 
-void ABall::SpawnBall()
+void ABall::DefaultProjectileMovement()
 {
-	if (BallObject == NULL)
-	{
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(2, 10.f, FColor::Red, "SPAWNING");
-		}
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-		UWorld* World = GetWorld();
-		//GetInstigator();
-		BallObject = World->SpawnActor<ABall>(BallBlueprint, InitialBallLocation, SpawnDirection->GetRelativeRotation(), SpawnParams);
-		UE_LOG(LogTemp, Warning, TEXT("Ball Rotation: %s"), *GetActorRotation().ToString());
-	}
-	
+	ProjectileMovement->ProjectileGravityScale = 0.f;
+	ProjectileMovement->InitialSpeed = 100.f;
+	ProjectileMovement->MaxSpeed = 200.f;
+	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->Bounciness = 1.2;
+	ProjectileMovement->Friction = 0.f;
 }

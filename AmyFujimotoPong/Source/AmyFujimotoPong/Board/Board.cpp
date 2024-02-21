@@ -21,6 +21,8 @@ ABoard::ABoard()
 	MainCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	SpringArm->SetupAttachment(RootComponent);
 	MainCamera->SetupAttachment(SpringArm);
+
+	SpringArm->bDoCollisionTest = false;
 }
 
 // Called when the game starts or when spawned

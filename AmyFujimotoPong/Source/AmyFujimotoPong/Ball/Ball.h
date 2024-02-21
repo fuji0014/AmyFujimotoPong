@@ -11,9 +11,13 @@ class AMYFUJIMOTOPONG_API ABall : public AActor
 {
 	GENERATED_BODY()
 
+public:	
+	// Sets default values for this actor's properties
+	ABall();
+
 	UPROPERTY(VisibleAnywhere, Category = "Ball")
 	class USphereComponent* CollisionSphere;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Ball")
 	UStaticMeshComponent* VisualMesh;
 
@@ -23,19 +27,7 @@ class AMYFUJIMOTOPONG_API ABall : public AActor
 	UPROPERTY(VisibleAnywhere, Category = "Ball")
 	class UArrowComponent* SpawnDirection;
 
-public:	
-	// Sets default values for this actor's properties
-	ABall();
-
-	UPROPERTY(EditAnywhere, Category = "Class to Spawn")
-	TSubclassOf<class ABall> BallBlueprint;
-	
-	void SpawnBall();
-
-	class ABall* BallObject;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector InitialBallLocation;
+	void DefaultProjectileMovement();
 
 protected:
 	// Called when the game starts or when spawned
