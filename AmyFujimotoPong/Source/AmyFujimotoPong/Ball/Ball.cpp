@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABall::ABall()
@@ -21,11 +22,14 @@ ABall::ABall()
 	//CollisionSphere->SetSimulatePhysics(true);
 	CollisionSphere->SetCollisionProfileName("BlockAllDynamic");
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
 	SetRootComponent(CollisionSphere);
+
 	VisualMesh->SetupAttachment(RootComponent);
 	SetActorEnableCollision(true);
 
+	SpawnDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("SpawnDirection"));
+	SpawnDirection->SetupAttachment(RootComponent);
+		
 	//CollisionSphere->GetBodyInstance()->bLockXRotation = true;
 	//CollisionSphere->GetBodyInstance()->bLockYRotation = true;
 	//CollisionSphere->GetBodyInstance()->bLockZRotation = true;
@@ -40,34 +44,46 @@ ABall::ABall()
 	ProjectileMovement->Bounciness = 1.1;
 	ProjectileMovement->Friction = 0.f;
 
-	SpawnDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("SpawnDirection"));
+	InitialBallLocation = GetActorLocation();
 }
 
 // Called when the game starts or when spawned
 void ABall::BeginPlay()
-{
+{	
 	Super::BeginPlay();
-	SpawnBall();
+	SetActorRotation(SpawnDirection->GetRelativeRotation());
+	FVector ArrowDirection = GetActorForwardVector();
+	ProjectileMovement->Velocity = ArrowDirection * ProjectileMovement->InitialSpeed;
+
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Rotation: %s"), *SpawnDirection->GetRelativeRotation().ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Ball Rotation: %s"), *GetActorRotation().ToString());
+	
 }
 
 // Called every frame
 void ABall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//SpawnDirection->SetWorldRotation(GetActorRotation());
+	BallObject = Cast<ABall>(UGameplayStatics::GetActorOfClass(GetWorld(), ABall::StaticClass()));
+	SpawnBall();
 }
 
 void ABall::SpawnBall()
 {
-	if (!IsValid(BallObject))
+	if (BallObject == NULL)
 	{
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(2, 10.f, FColor::Red, "SPAWNING");
+		}
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 		UWorld* World = GetWorld();
 		//GetInstigator();
-		BallObject = World->SpawnActor<ABall>(BallBlueprint, GetActorLocation(), GetActorRotation(), SpawnParams);
+		BallObject = World->SpawnActor<ABall>(BallBlueprint, InitialBallLocation, SpawnDirection->GetRelativeRotation(), SpawnParams);
+		UE_LOG(LogTemp, Warning, TEXT("Ball Rotation: %s"), *GetActorRotation().ToString());
 	}
-
+	
 }

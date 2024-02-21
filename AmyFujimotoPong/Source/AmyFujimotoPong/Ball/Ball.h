@@ -32,8 +32,10 @@ public:
 	
 	void SpawnBall();
 
-	UPROPERTY(Transient)
 	class ABall* BallObject;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector InitialBallLocation;
 
 protected:
 	// Called when the game starts or when spawned
