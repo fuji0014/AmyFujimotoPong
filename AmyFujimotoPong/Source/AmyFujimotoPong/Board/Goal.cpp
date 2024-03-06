@@ -4,6 +4,7 @@
 #include "Goal.h"
 #include "../Ball/Ball.h"
 #include "Components/BoxComponent.h"
+#include "../PongGameState.h"
 
 
 // Sets default values
@@ -36,24 +37,20 @@ void AGoal::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (OtherActor) {	//Ball
 		if (ABall* Ball = Cast<ABall>(OtherActor)) {
 			Ball->Destroy();
+			APongGameState* GS = Cast<APongGameState>(GetWorld()->GetGameState());
 
 			if (GoalPosition == EGoalType::LeftGoal) {
-				if (GEngine) {
-					GEngine->AddOnScreenDebugMessage(2, 10.f, FColor::Red, "AGoal::OnCollisionBoxBeginOverlap Left");
-				}
+				if (GS)
+					GS->UpdateScore(EGoalType::LeftGoal);
 			}
 			else {
-				if (GEngine) {
-					GEngine->AddOnScreenDebugMessage(2, 10.f, FColor::Red, "AGoal::OnCollisionBoxBeginOverlap Right");
-				}
+				if (GS)
+					GS->UpdateScore(EGoalType::RightGoal);
 			}
 
 		}
 		/*
 			if(OtherAction->IsA<ABall>()) - alternate solution
 		*/
-		
-	}
-	
-	
+	}	
 }

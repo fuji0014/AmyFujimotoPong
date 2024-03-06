@@ -37,15 +37,4 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
-	void PrintMessageOnScreen(FString Message);
-
-	float GameStartsIn = 5;
-	float CurrentTime = 0;
-
-	FTimerHandle StartGameTimerHandle;
-	void StartGameTimer();
-
-	FTimerHandle GameCountDownTimer;
-	void CountDownTimer();
 };

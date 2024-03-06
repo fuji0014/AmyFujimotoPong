@@ -13,5 +13,5 @@ UCLASS()
 class AMYFUJIMOTOPONG_API AAmyFujimotoPongGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
 };

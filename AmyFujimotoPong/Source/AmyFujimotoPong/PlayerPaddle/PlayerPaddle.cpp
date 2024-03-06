@@ -50,6 +50,7 @@ APlayerPaddle::APlayerPaddle()
 void APlayerPaddle::BeginPlay()
 {
 	Super::BeginPlay();
+
 	OnActorHit.AddDynamic(this, &APlayerPaddle::OnHitActor);
 }
 
@@ -98,8 +99,8 @@ void APlayerPaddle::OnHitActor(AActor* SelfActor, AActor* OtherActor, FVector No
 
 	if (OtherActor)
 	{
-		FString Message = FString("OnHitActor: ") + OtherActor->GetName();
-		PrintMessageOnScreen(Message);
+		//FString Message = FString("OnHitActor: ") + OtherActor->GetName();
+		//PrintMessageOnScreen(Message);
 	}
 }
 

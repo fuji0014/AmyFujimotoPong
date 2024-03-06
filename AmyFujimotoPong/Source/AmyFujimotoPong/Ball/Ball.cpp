@@ -7,6 +7,7 @@
 #include "Components/ArrowComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "../PongGameState.h"
 
 // Sets default values
 ABall::ABall()
@@ -45,25 +46,9 @@ void ABall::BeginPlay()
 {	
 	Super::BeginPlay();
 
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	DisableInput(PC);
-
-	// Initialize the game timer
-	CurrentTime = GameStartsIn;
-
-	// Set a one-time timer to start the game after GameStartsIn seconds
-	GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ABall::StartGameTimer, GameStartsIn + 1, false);
-
-	// Set a repeating timer for the countdown
-	GetWorld()->GetTimerManager().SetTimer(GameCountDownTimer, this, &ABall::CountDownTimer, 1, true);
-
 	SetActorRotation(SpawnDirection->GetRelativeRotation());
 	FVector ArrowDirection = GetActorForwardVector();
-	ProjectileMovement->Velocity = ArrowDirection * ProjectileMovement->InitialSpeed;
-
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Rotation: %s"), *SpawnDirection->GetRelativeRotation().ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Ball Rotation: %s"), *GetActorRotation().ToString());
-	
+	ProjectileMovement->Velocity = ArrowDirection * ProjectileMovement->InitialSpeed;	
 }
 
 // Called every frame
@@ -72,35 +57,11 @@ void ABall::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABall::StartGameTimer()
-{
-	//ABallGameState* GS = Cast<ABallGameState>(GetWorld()->GetGameState());
-	//GS->GameStarted = true;
-
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	EnableInput(PC);
-}
-
-void ABall::CountDownTimer()
-{
-	if (CurrentTime == 0)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(GameCountDownTimer);
-		PrintMessageOnScreen(FString("Start Game"));
-		CurrentTime = 5;
-	}
-	else
-	{
-		CurrentTime--;
-		PrintMessageOnScreen(FString("Game Starts In: " + FString::FromInt(CurrentTime)));
-	}
-}
-
 void ABall::DefaultProjectileMovement()
 {
 	ProjectileMovement->ProjectileGravityScale = 0.f;
-	ProjectileMovement->InitialSpeed = 100.f;
-	ProjectileMovement->MaxSpeed = 200.f;
+	ProjectileMovement->InitialSpeed = 200.f;
+	ProjectileMovement->MaxSpeed = 300.f;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->Bounciness = 1.2;
 	ProjectileMovement->Friction = 0.f;
